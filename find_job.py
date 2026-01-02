@@ -50,16 +50,16 @@ def get_hh_statistics(popular_languages):
 
             response = requests.get(hh_url, params=params)
             response.raise_for_status()
-            hh_data = response.json()
-            hh_vacancies_count = hh_data.get('found')
+            hh_vacancies_page = response.json()
+            hh_vacancies_count = hh_vacancies_page.get('found')
 
-            for item in hh_data.get("items", []):
+            for item in hh_vacancies_page.get("items", []):
                 vacancy_salary = item.get('salary')
                 predicted = predict_rub_salary_hh(vacancy_salary)
                 if predicted:
                     salaries.append(predicted)
 
-            pages_number = hh_data.get('pages')
+            pages_number = hh_vacancies_page.get('pages')
             page += 1
 
         processed = len(salaries)
@@ -111,14 +111,14 @@ def get_sj_statistics(popular_languages, super_job_key):
 
             response = requests.get(sj_url, headers=headers, params=params)
             response.raise_for_status()
-            sj_data = response.json()
-            sj_vacancies_count = sj_data.get('total')
+            sj_vacancies_page = response.json()
+            sj_vacancies_count = sj_vacancies_page.get('total')
 
-            for item in sj_data.get('objects', []):
+            for item in sj_vacancies_page.get('objects', []):
                 predicted = predict_rub_salary_for_sj(item)
                 if predicted:
                     sj_salaries.append(predicted)
-            pages_number = sj_data.get('more')
+            pages_number = sj_vacancies_page.get('more')
             page += 1
 
         processed = len(sj_salaries)

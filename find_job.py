@@ -15,12 +15,12 @@ def get_expected_salary(salary_from, salary_to):
     return None
 
 
-def predict_rub_salary_hh(hh_vacancies):
-    if not hh_vacancies or hh_vacancies.get('currency') != 'RUR':
+def predict_rub_salary_hh(hh_vacancy):
+    if not hh_vacancy or hh_vacancy.get('currency') != 'RUR':
         return None
 
-    salary_from = hh_vacancies.get('from')
-    salary_to = hh_vacancies.get('to')
+    salary_from = hh_vacancy.get('from')
+    salary_to = hh_vacancy.get('to')
 
     return get_expected_salary(salary_from, salary_to)
 
@@ -32,12 +32,12 @@ def get_hh_statistics(popular_languages):
     for language in popular_languages:
         salaries = []
         page = 0
-        pages_number = 1
+        pages_total = 1
         per_page = 100
         area = 1
         date_from = '2025-10-27'
 
-        while page < pages_number:
+        while page < pages_total:
             params = {
                 'text': f'программист {language}',
                 'area': area,
@@ -51,13 +51,13 @@ def get_hh_statistics(popular_languages):
             hh_vacancies_page = response.json()
             hh_vacancies_count = hh_vacancies_page.get('found')
 
-            for item in hh_vacancies_page.get("items", []):
-                vacancy_salary = item.get('salary')
+            for vacancy in hh_vacancies_page.get("items", []):
+                vacancy_salary = vacancy.get('salary')
                 predicted = predict_rub_salary_hh(vacancy_salary)
                 if predicted:
                     salaries.append(predicted)
 
-            pages_number = hh_vacancies_page.get('pages')
+            pages_total = hh_vacancies_page.get('pages')
             page += 1
 
         processed = len(salaries)
@@ -72,15 +72,15 @@ def get_hh_statistics(popular_languages):
     return hh_vacancies
 
 
-def predict_rub_salary_for_sj(sj_vacancies):
-    payment_from = sj_vacancies.get('payment_from')
-    payment_to = sj_vacancies.get('payment_to')
-    currency = sj_vacancies.get('currency')
+def predict_rub_salary_sj(sj_vacancy):
+    payment_from = sj_vacancy.get('payment_from')
+    payment_to = sj_vacancy.get('payment_to')
+    currency = sj_vacancy.get('currency')
 
     if currency != 'rub':
         return None
 
-    return get_the_expected_salary(payment_from, payment_to)
+    return get_expected_salary(payment_from, payment_to)
 
 
 def get_sj_statistics(popular_languages, super_job_key):
@@ -110,8 +110,8 @@ def get_sj_statistics(popular_languages, super_job_key):
             sj_vacancies_page = response.json()
             sj_vacancies_count = sj_vacancies_page.get('total')
 
-            for item in sj_vacancies_page.get('objects', []):
-                predicted = predict_rub_salary_for_sj(item)
+            for vacancy in sj_vacancies_page.get('objects', []):
+                predicted = predict_rub_salary_sj(vacancy)
                 if predicted:
                     sj_salaries.append(predicted)
             pages_number = sj_vacancies_page.get('more')

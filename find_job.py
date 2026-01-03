@@ -5,12 +5,12 @@ from terminaltables import AsciiTable
 from dotenv import load_dotenv
 
 
-def get_the_expected_salary(salary_from, salary_to, has_from, has_to):
-    if not has_to and has_from:
+def get_the_expected_salary(salary_from, salary_to):
+    if not salary_to and salary_from:
         return int(salary_from * 1.2)
-    elif not has_from and has_to:
+    elif not salary_from and salary_to:
         return int(salary_to * 0.8) 
-    elif has_from and has_to:
+    elif salary_from and salary_to:
         return int((salary_from + salary_to) / 2)
     return None
 
@@ -21,10 +21,8 @@ def predict_rub_salary_hh(hh_vacancies):
 
     salary_from = hh_vacancies.get('from')
     salary_to = hh_vacancies.get('to')
-    has_from = salary_from is not None
-    has_to = salary_to is not None
 
-    return get_the_expected_salary(salary_from, salary_to, has_from, has_to)
+    return get_the_expected_salary(salary_from, salary_to)
 
 
 def get_hh_statistics(popular_languages):
@@ -81,10 +79,8 @@ def predict_rub_salary_for_sj(sj_vacancies):
 
     if currency != 'rub':
         return None
-    has_from = payment_from not in (None, 0)
-    has_to = payment_to not in (None, 0)
 
-    return get_the_expected_salary(payment_from, payment_to, has_from, has_to)
+    return get_the_expected_salary(payment_from, payment_to)
 
 
 def get_sj_statistics(popular_languages, super_job_key):

@@ -5,7 +5,7 @@ from terminaltables import AsciiTable
 from dotenv import load_dotenv
 
 
-def get_the_expected_salary(salary_from, salary_to):
+def get_expected_salary(salary_from, salary_to):
     if not salary_to and salary_from:
         return int(salary_from * 1.2)
     elif not salary_from and salary_to:
@@ -22,7 +22,7 @@ def predict_rub_salary_hh(hh_vacancies):
     salary_from = hh_vacancies.get('from')
     salary_to = hh_vacancies.get('to')
 
-    return get_the_expected_salary(salary_from, salary_to)
+    return get_expected_salary(salary_from, salary_to)
 
 
 def get_hh_statistics(popular_languages):
